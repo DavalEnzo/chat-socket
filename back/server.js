@@ -1,12 +1,32 @@
 const express = require('express');
 const app = express();
+const authRoute = require('./Routes/AuthRoute');
+const mongoose = require('mongoose');
+const cookieParser = require("cookie-parser");
 const PORT = 4000;
 
 //New imports
 const http = require('http').Server(app);
 const cors = require('cors');
 
-app.use(cors());
+mongoose
+  .connect(process.env.MONGO_URI, {
+    serverApi: {
+      version: "1",
+      strict: true,
+      deprecationErrors: true,
+    }
+  })
+  .then(() => console.log("MongoDB is  connected successfully"))
+  .catch((err) => console.error(err));
+
+app.use(cors(
+  {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  }
+));
 
 const socketIO = require('socket.io')(http, {
     cors: {
@@ -49,3 +69,7 @@ app.get('/api', (req, res) => {
 http.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
+
+app.use(cookieParser());
+app.use(express.json());
+app.use("/", authRoute);

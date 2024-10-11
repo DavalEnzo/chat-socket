@@ -1,9 +1,11 @@
 import React, {useEffect, useRef, useState} from 'react';
 import ChatMessage from "./ChatMessage";
-import {toast, Bounce, ToastContainer} from 'react-toastify';
+import {toast, Bounce} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import ChatRoomUsers from "./ChatRoomUsers";
+import axios from "axios";
+import {useCookies} from "react-cookie";
 
 function ChatRoom({ socket }) {
   const navigate = useNavigate();
@@ -11,10 +13,30 @@ function ChatRoom({ socket }) {
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState('');
   const [users, setUsers] = useState([]);
+  const [cookies, removeCookie] = useCookies([]);
 
   const user = localStorage.getItem('user');
 
-  const leaveChatRoom = () => {
+  useEffect(() => {
+    const verifyCookie = async () => {
+      console.log(cookies)
+      const { data } = await axios.post(
+        "http://localhost:4000",
+        {},
+        { withCredentials: true }
+      );
+      const { status } = data;
+      if (!status) {
+        toast.error("Connectez vous pour accéder à cette page", {
+          position: "bottom-right"
+        });
+        navigate("/");
+      }
+    };
+    verifyCookie();
+  }, [cookies, navigate, removeCookie]);
+
+  const Logout = () => {
     socket.emit('leave', user);
     socket.on('leaveResponse', (data) => {
       toast.success(`Utilisateur ${data} déconnecté`, {
@@ -29,10 +51,11 @@ function ChatRoom({ socket }) {
         transition: Bounce,
       });
       if (data === user) {
-        localStorage.removeItem('user');
-        navigate('/');
+        localStorage.removeItem('token');
       }
     });
+    removeCookie('token');
+    navigate("/");
   };
 
   const sendMessage = () => {
@@ -64,13 +87,17 @@ function ChatRoom({ socket }) {
 
   return (
     <>
-      <ToastContainer />
-      <div className={"flex flex-col p-11 justify-center items-center gap-12"}>
-      <h1 className={"text-5xl"}>Messages</h1>
-        <div className={"flex bg-slate-400 h-80 rounded-2xl border w-4/6 p-5 gap-3"}>
+      <div className={"flex flex-col p-11 items-center gap-12 h-full"}>
+        <div className="flex items-center w-full">
+          <h1 className={"text-5xl ml-auto"}>Messages</h1>
+          <img className={"w-20 h-20 rounded-full ml-auto"}
+               src={"https://media.istockphoto.com/id/1131164548/vector/avatar-5.jpg?s=612x612&w=0&k=20&c=CK49ShLJwDxE4kiroCR42kimTuuhvuo2FH5y_6aSgEo="}
+               alt=""/>
+        </div>
+        <div className={"flex bg-slate-400 h-5/6 rounded-2xl border w-5/6 p-5 gap-3"}>
           <div className={"flex flex-col justify-end w-full"}>
             <div ref={listRef} className={"overflow-scroll scroll-smooth"}>
-              {messages.map((message, index) => (
+            {messages.map((message, index) => (
                 <ChatMessage key={index} message={message}/>
               ))}
             </div>
@@ -85,7 +112,7 @@ function ChatRoom({ socket }) {
               />
               <button onClick={sendMessage} className="ml-2 bg-blue-500 text-white rounded-md px-4 py-2">Envoyer
               </button>
-              <button onClick={leaveChatRoom} className={"ml-2 bg-red-500 text-white rounded-md px-4 py-2"}>Se
+              <button onClick={Logout} className={"ml-2 bg-red-500 text-white rounded-md px-4 py-2"}>Se
                 déconnecter
               </button>
             </div>
