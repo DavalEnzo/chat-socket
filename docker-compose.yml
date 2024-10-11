@@ -1,0 +1,28 @@
+services:
+  front:
+    build: ./front
+    container_name: front
+    ports:
+      - "666:80"
+    volumes:
+      - ./front:/front
+      - ./front/logs:/var/log/apache2
+    environment:
+        - WORK_DIR=/front
+        - LOG_DIR=/var/log/apache2
+    networks:
+        - default
+
+  back:
+    build: ./back
+    container_name: back
+    ports:
+        - "4000:4000"
+    volumes:
+        - ./back:/back
+    networks:
+        - default
+
+networks:
+  default:
+    driver: bridge

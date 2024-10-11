@@ -1,70 +1,45 @@
-# Getting Started with Create React App
+# Chat
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Description
 
-## Available Scripts
+Ce projet est une application de chat en temps réel qui permet aux utilisateurs de communiquer instantanément dans des salles de chat. Développée avec React pour le front-end et Express.js pour le back-end, elle utilise Socket.IO pour les communications en temps réel. Le déploiement est facilité par Docker, avec le front-end servi par Apache et le back-end gérant les connexions WebSocket pour une interaction fluide et rapide.
 
-In the project directory, you can run:
+## Prérequis
 
-### `npm start`
+- [Docker](https://www.docker.com/get-started)
+- [Docker Compose](https://docs.docker.com/compose/install/)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Installation
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+1. Récupérez les fichiers du projet :
 
-### `npm test`
+2. Modifiez les addresses IP dans les fichiers `front/src/App.js` et `back/server.js` pour correspondre à votre configuration réseau.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+3. Placez-vous à la racine du projet :
 
-### `npm run build`
+```bash
+cd Chat
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+4. Lancez les conteneurs Docker :
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+docker-compose up
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+5. Ouvrez votre navigateur et rendez-vous à l'adresse de votre serveur au port 666 pour accéder à l'application.
 
-### `npm run eject`
+## Utilisation
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. Entrez un nom d'utilisateur et choisissez une salle de chat. (Pour l'instant il n'y a qu'une seule salle de chat et tout le monde s'appelle Charlie.)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+2. Commencez à discuter avec les autres utilisateurs connectés.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+3. Pour quitter la salle de chat, cliquez sur le bouton "Se déconnecter". (Ca ne fonctionne pas encore)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Structure du projet
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- `front/` : Contient les fichiers du front-end de l'application.
+- `back/` : Contient les fichiers du back-end de l'application.
+- `docker-compose.yml` : Fichier de configuration Docker Compose pour lancer les conteneurs.
+- `README.md` : Fichier de description du projet.
