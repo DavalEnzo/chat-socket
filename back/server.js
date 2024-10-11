@@ -46,6 +46,6 @@ app.get('/api', (req, res) => {
   });
 });
 
-http.listen(PORT, "0.0.0.0", () => {
+http.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
