@@ -5,7 +5,7 @@ import ChatRoom from './components/ChatRoom';
 import './App.css';
 import socketIO from 'socket.io-client';
 
-const socket = socketIO.connect(`http://${process.env.REACT_APP_SOCKET_ENDPOINT}:4000`);
+const socket = socketIO.connect(`https://${process.env.REACT_APP_SOCKET_ENDPOINT}`);
 
 function App() {
   return (
