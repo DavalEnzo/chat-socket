@@ -21,7 +21,7 @@ function ChatRoom({ socket }) {
     const verifyCookie = async () => {
       console.log(cookies)
       const { data } = await axios.post(
-        "http://localhost:4000",
+        `http://${process.env.REACT_APP_SOCKET_ENDPOINT}:4000`,
         {},
         { withCredentials: true }
       );

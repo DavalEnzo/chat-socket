@@ -31,7 +31,7 @@ export default function HomePage({ socket }) {
     e.preventDefault();
     try {
       const {data} = await axios.post(
-        "http://localhost:4000/login",
+        `http://${process.env.REACT_APP_SOCKET_ENDPOINT}:4000/login`,
         {
           ...inputValue,
         },
