@@ -22,7 +22,7 @@ mongoose
 
 app.use(cors(
   {
-    origin: "http://localhost:3000",
+    origin: "https://chat-socket-front.onrender.com/",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   }
