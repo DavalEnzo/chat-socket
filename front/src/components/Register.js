@@ -32,7 +32,7 @@ const Register = () => {
     e.preventDefault();
     try {
       const {data} = await axios.post(
-        `http://${process.env.REACT_APP_SOCKET_ENDPOINT}:4000/signup`,
+        `https://${process.env.REACT_APP_SOCKET_ENDPOINT}:4000/signup`,
         {
           ...inputValue,
         },
