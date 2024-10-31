@@ -1,10 +1,24 @@
 import React from 'react';
 
-function ChatMessage({index, message}) {
+function ChatMessage({index, message, previousMessage}) {
+
+  const getLastMessage = () => {
+    if (previousMessage && previousMessage.user.username === message.user.username) {
+      return previousMessage.text
+    }
+  }
+
   return (
-    <div key={index} className="text-2xl mb-7 flex items-center gap-3">
-      <img className={"w-11 h-11 rounded-full"} alt={"profile"} src={"https://media.istockphoto.com/id/1131164548/vector/avatar-5.jpg?s=612x612&w=0&k=20&c=CK49ShLJwDxE4kiroCR42kimTuuhvuo2FH5y_6aSgEo="} />
-      <p>{message.user}: {message.text}</p>
+    <div key={index} className={"text-2xl flex items-center gap-3 " + (!getLastMessage() ? 'mt-4' : '') }>
+        {!getLastMessage() && <img className={"w-11 h-11 rounded-full object-cover"} alt={"profile"} src={message.user.profilePicture} />}
+        {getLastMessage() && <div className={"min-w-11"}></div>}
+      <div className="flex-col">
+        <div className="flex items-baseline gap-2">
+          {!getLastMessage() && <p className={"font-bold"}>{message.user.username}</p>}
+          {!getLastMessage() && <p className={"text-sm text-black/70"}>{new Date(message.date).toLocaleDateString([], { hour: '2-digit', minute: '2-digit' })}</p>}
+        </div>
+        <p className={"text-lg break-all"}>{message.text}</p>
+      </div>
     </div>
   );
 }

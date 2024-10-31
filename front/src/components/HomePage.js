@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-export default function HomePage({ socket }) {
+export default function HomePage({ socket, setProfilePicture }) {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState({
     username: "",
@@ -31,17 +31,18 @@ export default function HomePage({ socket }) {
     e.preventDefault();
     try {
       const {data} = await axios.post(
-        `https://${process.env.REACT_APP_SOCKET_ENDPOINT}:4000/login`,
+        `http://${process.env.REACT_APP_SOCKET_ENDPOINT}:4000/login`,
         {
           ...inputValue,
         },
         {withCredentials: true}
       );
       console.log(data);
-      const {success, message} = data;
+      const {user, success, message} = data;
       if (success) {
-        socket.emit('join', username);
-        localStorage.setItem('user', username);
+        socket.emit('join', [user.username, user.profilePicture]);
+        localStorage.setItem('user', JSON.stringify(user));
+        setProfilePicture(user.profilePicture);
         navigate("/chat-room");
         handleSuccess(message);
       } else {

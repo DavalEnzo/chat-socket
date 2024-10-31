@@ -1,11 +1,13 @@
 import React, {useEffect, useRef, useState} from 'react';
 import ChatMessage from "./ChatMessage";
-import {toast, Bounce} from 'react-toastify';
+import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import ChatRoomUsers from "./ChatRoomUsers";
 import axios from "axios";
 import {useCookies} from "react-cookie";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faUserGroup} from "@fortawesome/free-solid-svg-icons";
 
 function ChatRoom({ socket }) {
   const navigate = useNavigate();
@@ -14,14 +16,14 @@ function ChatRoom({ socket }) {
   const [messageText, setMessageText] = useState('');
   const [users, setUsers] = useState([]);
   const [cookies, removeCookie] = useCookies([]);
+  const [showUsers, setShowUsers] = useState(false);
 
-  const user = localStorage.getItem('user');
+  const user = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
     const verifyCookie = async () => {
-      console.log(cookies)
       const { data } = await axios.post(
-        `https://${process.env.REACT_APP_SOCKET_ENDPOINT}:4000`,
+        `http://${process.env.REACT_APP_SOCKET_ENDPOINT}:4000`,
         {},
         { withCredentials: true }
       );
@@ -36,32 +38,11 @@ function ChatRoom({ socket }) {
     verifyCookie();
   }, [cookies, navigate, removeCookie]);
 
-  const Logout = () => {
-    socket.emit('leave', user);
-    socket.on('leaveResponse', (data) => {
-      toast.success(`Utilisateur ${data} déconnecté`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-        transition: Bounce,
-      });
-      if (data === user) {
-        localStorage.removeItem('token');
-      }
-    });
-    removeCookie('token');
-    navigate("/");
-  };
-
   const sendMessage = () => {
     socket.emit('message', {
       text: messageText,
-      user: user,
+      date: new Date(),
+      user: {username:user.username, profilePicture:user.profilePicture},
       name: 'test',
       id: `${socket.id}${Math.random()}`,
       socketID: socket.id,
@@ -79,7 +60,7 @@ function ChatRoom({ socket }) {
     });
 
     socket.on('leaveResponse', (data) => {
-      setUsers(users.filter(user => user !== data))
+      setUsers(users.filter(user => user[0] !== data))
     });
 
     listRef.current?.lastElementChild?.scrollIntoView()
@@ -87,21 +68,19 @@ function ChatRoom({ socket }) {
 
   return (
     <>
-      <div className={"flex flex-col p-11 items-center gap-12 h-full"}>
+      <div className={"flex flex-col sm:p-11 items-center h-full gap-10"}>
         <div className="flex items-center w-full">
-          <h1 className={"text-5xl ml-auto"}>Messages</h1>
-          <img className={"w-20 h-20 rounded-full ml-auto"}
-               src={"https://media.istockphoto.com/id/1131164548/vector/avatar-5.jpg?s=612x612&w=0&k=20&c=CK49ShLJwDxE4kiroCR42kimTuuhvuo2FH5y_6aSgEo="}
-               alt=""/>
+          <h1 className={"text-5xl mx-auto mt-7"}>Messages</h1>
         </div>
-        <div className={"flex bg-slate-400 h-5/6 rounded-2xl border w-5/6 p-5 gap-3"}>
-          <div className={"flex flex-col justify-end w-full"}>
-            <div ref={listRef} className={"overflow-scroll scroll-smooth"}>
+        <div className={"flex w-11/12 flex-col xl:flex-row bg-slate-400 h-[calc(100vh-10rem)] rounded-2xl border xl:w-5/6 p-2 gap-3 overflow-hidden"}>
+          <button onClick={() => setShowUsers(!showUsers)} className="bg-gray-600 text-white rounded-md px-2 xl:px-4 py-2 min-w-12 ml-auto xl:h-11 xl:order-last"><FontAwesomeIcon icon={faUserGroup}/></button>
+          <div className={"xl:flex flex-col justify-end w-full h-full overflow-scroll " + (showUsers ? "hidden" : "flex")}>
+            <div ref={listRef} className={"overflow-scroll scroll-smooth mb-2"}>
             {messages.map((message, index) => (
-                <ChatMessage key={index} message={message}/>
+                <ChatMessage key={index} index={index} message={message} previousMessage={messages[index - 1]}/>
               ))}
             </div>
-            <div className="flex items-center rounded-md">
+            <div className="flex items-center rounded-md p-2 w-full">
               <input
                 type="text"
                 value={messageText}
@@ -110,14 +89,11 @@ function ChatRoom({ socket }) {
                 placeholder="Entrez un message et appuyer sur ENTREE"
                 className="flex-grow p-2 rounded-md border border-gray-300"
               />
-              <button onClick={sendMessage} className="ml-2 bg-blue-500 text-white rounded-md px-4 py-2">Envoyer
-              </button>
-              <button onClick={Logout} className={"ml-2 bg-red-500 text-white rounded-md px-4 py-2"}>Se
-                déconnecter
+              <button onClick={sendMessage} className="ml-2 bg-blue-500 text-white rounded-md px-2 xl:px-4 py-2">Envoyer
               </button>
             </div>
           </div>
-          <ChatRoomUsers users={users} />
+          <ChatRoomUsers users={users} showUsers={showUsers} />
         </div>
       </div>
     </>

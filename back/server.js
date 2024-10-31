@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const authRoute = require('./Routes/AuthRoute');
+const uploadRoute = require('./Routes/UploadRoute');
 const mongoose = require('mongoose');
 const cookieParser = require("cookie-parser");
 const PORT = 4000;
@@ -22,7 +23,7 @@ mongoose
 
 app.use(cors(
   {
-    origin: "https://chat-socket-front.onrender.com/",
+    origin: "http://localhost:3000",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   }
@@ -73,3 +74,5 @@ http.listen(PORT, () => {
 app.use(cookieParser());
 app.use(express.json());
 app.use("/", authRoute);
+app.use("/upload", uploadRoute);
+app.use(express.static("uploads"));

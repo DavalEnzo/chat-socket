@@ -14,6 +14,11 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, "Le mot de passe est requis"],
+    select: false,
+  },
+  profilePicture: {
+    type: String,
+    default: "https://media.istockphoto.com/id/1131164548/vector/avatar-5.jpg?s=612x612&w=0&k=20&c=CK49ShLJwDxE4kiroCR42kimTuuhvuo2FH5y_6aSgEo=",
   },
   createdAt: {
     type: Date,
