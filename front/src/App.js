@@ -9,7 +9,7 @@ import {ToastContainer} from "react-toastify";
 import ProfilePage from "./components/ProfilePage";
 import NavbarComponent from "./components/NavbarComponent";
 
-const socket = socketIO.connect(`http://${process.env.REACT_APP_SOCKET_ENDPOINT}`);
+const socket = socketIO.connect(`https://${process.env.REACT_APP_SOCKET_ENDPOINT}:4000`);
 
 function App() {
   const [profilePic, setProfilePic] = useState("defaultProfilePic.jpg");

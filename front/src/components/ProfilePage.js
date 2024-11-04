@@ -70,7 +70,7 @@ export default function ProfilePage({ setProfilePicture }) {
     if (password) {
       try {
         const {data} = await axios.post(
-          `http://${process.env.REACT_APP_SOCKET_ENDPOINT}:4000/check-password`,
+          `https://${process.env.REACT_APP_SOCKET_ENDPOINT}:4000/check-password`,
           { user_id: user._id, password: password },
           {withCredentials: true});
         const {success} = data;
@@ -95,8 +95,8 @@ export default function ProfilePage({ setProfilePicture }) {
 
     try {
       const {data} = await axios.put(
-        `http://${process.env.REACT_APP_SOCKET_ENDPOINT}:4000/user`,
-        { user_id: user._id, email: email, password: newPassword, profilePicture: "http://localhost:4000/profilePictures/" + image.raw.name },
+        `https://${process.env.REACT_APP_SOCKET_ENDPOINT}:4000/user`,
+        { user_id: user._id, email: email, password: newPassword, profilePicture: "https://localhost:4000/profilePictures/" + image.raw.name },
         {withCredentials: true}
       );
 
@@ -104,7 +104,7 @@ export default function ProfilePage({ setProfilePicture }) {
         const formData = new FormData();
         formData.append("image", image.raw);
         await axios.post(
-          `http://${process.env.REACT_APP_SOCKET_ENDPOINT}:4000/upload`,
+          `https://${process.env.REACT_APP_SOCKET_ENDPOINT}:4000/upload`,
           formData,
           {
             headers: {
@@ -120,9 +120,9 @@ export default function ProfilePage({ setProfilePicture }) {
       const {success, message} = data;
       if (success) {
         handleSuccess(message);
-        setProfilePicture("http://localhost:4000/profilePictures/" + image.raw.name);
+        setProfilePicture("https://localhost:4000/profilePictures/" + image.raw.name);
         setError("");
-        localStorage.setItem('user', JSON.stringify({ ...user, email: email, profilePicture: "http://localhost:4000/profilePictures/" + image.raw.name }));
+        localStorage.setItem('user', JSON.stringify({ ...user, email: email, profilePicture: "https://localhost:4000/profilePictures/" + image.raw.name }));
       }
     } catch (error) {
       console.log(error);
