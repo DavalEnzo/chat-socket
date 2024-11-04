@@ -31,7 +31,7 @@ export default function HomePage({ socket, setProfilePicture }) {
     e.preventDefault();
     try {
       const {data} = await axios.post(
-        `https://${process.env.REACT_APP_SOCKET_ENDPOINT}:4000/login`,
+        `https://${process.env.REACT_APP_SOCKET_ENDPOINT}/login`,
         {
           ...inputValue,
         },
