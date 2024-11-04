@@ -18,7 +18,6 @@ function classNames(...classes) {
 
 const user = JSON.parse(localStorage.getItem('user'));
 
-
 export default function NavbarComponent({ profilePic, socket }) {
   const navigate = useNavigate();
   const [cookies, removeCookie] = useCookies(["token"]);
@@ -80,7 +79,7 @@ export default function NavbarComponent({ profilePic, socket }) {
               </div>
             </div>
           </div>
-          { cookies["token"] !== 'undefined' &&
+          { (cookies["token"] !== 'undefined' && user) &&
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
             <button
               type="button"
