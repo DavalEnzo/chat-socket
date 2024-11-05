@@ -42,7 +42,7 @@ module.exports.Login = async (req, res, next) => {
     res.cookie("token", token, {
       withCredentials: true,
       httpOnly: false,
-      sameSite: "strict",
+      sameSite: "none",
     });
     res.status(201).json({ user: user, message: "Vous êtes connecté !", success: true });
     next()
