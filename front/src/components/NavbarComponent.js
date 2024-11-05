@@ -37,7 +37,7 @@ export default function NavbarComponent({ profilePic, socket }) {
         transition: Bounce,
       });
       if (data === user.username) {
-        localStorage.removeItem('token');
+        localStorage.removeItem('user');
       }
     });
     removeCookie('token');
