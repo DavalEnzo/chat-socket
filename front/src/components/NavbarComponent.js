@@ -38,6 +38,7 @@ export default function NavbarComponent({ profilePic, socket }) {
       });
       if (data === user) {
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
       }
     });
     removeCookie('token');
