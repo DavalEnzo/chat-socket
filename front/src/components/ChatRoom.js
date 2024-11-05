@@ -1,13 +1,13 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ChatMessage from "./ChatMessage";
-import {toast} from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import ChatRoomUsers from "./ChatRoomUsers";
 import axios from "axios";
-import {useCookies} from "react-cookie";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faUserGroup} from "@fortawesome/free-solid-svg-icons";
+import { useCookies } from "react-cookie";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserGroup } from "@fortawesome/free-solid-svg-icons";
 
 function ChatRoom({ socket }) {
   const navigate = useNavigate();
@@ -17,6 +17,8 @@ function ChatRoom({ socket }) {
   const [users, setUsers] = useState([]);
   const [cookies, removeCookie] = useCookies([]);
   const [showUsers, setShowUsers] = useState(false);
+  const [ecriture, setEcriture] = useState({});
+  const typingTimeoutRef = useRef(null); // Reference to hold typing timeout
 
   const user = JSON.parse(localStorage.getItem('user'));
 
@@ -42,7 +44,7 @@ function ChatRoom({ socket }) {
     socket.emit('message', {
       text: messageText,
       date: new Date(),
-      user: {username:user.username, profilePicture:user.profilePicture},
+      user: { username: user.username, profilePicture: user.profilePicture },
       name: 'test',
       id: `${socket.id}${Math.random()}`,
       socketID: socket.id,
@@ -51,6 +53,24 @@ function ChatRoom({ socket }) {
   };
 
   useEffect(() => {
+    if (messageText) {
+      socket.emit('ecrire', { username: user.username, message: messageText });
+
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+
+      typingTimeoutRef.current = setTimeout(() => {
+        setEcriture({});
+      }, 2000);
+    } else {
+      setEcriture({});
+    }
+  }, [messageText, socket, user.username]);
+
+  useEffect(() => {
+    socket.on('ecrireResponse', (data) => {
+      setEcriture({ username: data.username });
+    });
+
     socket.on('messageResponse', (data) => {
       setMessages(([...messages, data]))
     });
@@ -63,7 +83,7 @@ function ChatRoom({ socket }) {
       setUsers(users.filter(user => user[0] !== data))
     });
 
-    listRef.current?.lastElementChild?.scrollIntoView()
+    listRef.current?.lastElementChild?.scrollIntoView();
   }, [socket, messages, users]);
 
   return (
@@ -73,12 +93,22 @@ function ChatRoom({ socket }) {
           <h1 className={"text-5xl mx-auto mt-7"}>Messages</h1>
         </div>
         <div className={"flex w-11/12 flex-col xl:flex-row bg-slate-400 h-[calc(100vh-10rem)] rounded-2xl border xl:w-5/6 p-2 gap-3 overflow-hidden"}>
-          <button onClick={() => setShowUsers(!showUsers)} className="bg-gray-600 text-white rounded-md px-2 xl:px-4 py-2 min-w-12 ml-auto xl:h-11 xl:order-last"><FontAwesomeIcon icon={faUserGroup}/></button>
+          <button onClick={() => setShowUsers(!showUsers)} className="bg-gray-600 text-white rounded-md px-2 xl:px-4 py-2 min-w-12 ml-auto xl:h-11 xl:order-last">
+            <FontAwesomeIcon icon={faUserGroup} />
+          </button>
           <div className={"xl:flex flex-col justify-end w-full h-full overflow-scroll " + (showUsers ? "hidden" : "flex")}>
             <div ref={listRef} className={"overflow-scroll scroll-smooth mb-2"}>
-            {messages.map((message, index) => (
+              {messages.map((message, index) => (
                 <ChatMessage key={index} index={index} message={message} previousMessage={messages[index - 1]}/>
               ))}
+              <div className={`flex space-x-1 items-center justify-start align-bottom my-2 ${ecriture.username ? "visible" : "invisible"}`}>
+                <div className='h-2 w-2 bg-gray-600 rounded-full animate-bounce [animation-delay:-0.3s]'></div>
+                <div className='h-2 w-2 bg-gray-600 rounded-full animate-bounce [animation-delay:-0.15s]'></div>
+                <div className='h-2 w-2 bg-gray-600 rounded-full animate-bounce'></div>
+                <p
+                  className={`text-gray-600 mx-3.5 my-2`}>{ecriture.username} est
+                  en train d'écrire...</p>
+              </div>
             </div>
             <div className="flex items-center rounded-md p-2 w-full">
               <input
