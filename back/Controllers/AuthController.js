@@ -43,6 +43,7 @@ module.exports.Login = async (req, res, next) => {
       withCredentials: true,
       httpOnly: false,
       sameSite: "none",
+      secure: true
     });
     res.status(201).json({ user: user, message: "Vous êtes connecté !", success: true });
     next()
