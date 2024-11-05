@@ -96,7 +96,7 @@ export default function ProfilePage({ setProfilePicture }) {
     try {
       const {data} = await axios.put(
         `https://${process.env.REACT_APP_SOCKET_ENDPOINT}/user`,
-        { user_id: user._id, email: email, password: newPassword, profilePicture: "https://localhost/profilePictures/" + image.raw.name },
+        { user_id: user._id, email: email, password: newPassword, profilePicture: `https://${process.env.REACT_APP_SOCKET_ENDPOINT}/profilePictures/` + image.raw.name },
         {withCredentials: true}
       );
 
@@ -120,9 +120,9 @@ export default function ProfilePage({ setProfilePicture }) {
       const {success, message} = data;
       if (success) {
         handleSuccess(message);
-        setProfilePicture("https://localhost/profilePictures/" + image.raw.name);
+        setProfilePicture(`https://${process.env.REACT_APP_SOCKET_ENDPOINT}/profilePictures/` + image.raw.name);
         setError("");
-        localStorage.setItem('user', JSON.stringify({ ...user, email: email, profilePicture: "https://localhost/profilePictures/" + image.raw.name }));
+        localStorage.setItem('user', JSON.stringify({ ...user, email: email, profilePicture: `https://${process.env.REACT_APP_SOCKET_ENDPOINT}/profilePictures/` + image.raw.name }));
       }
     } catch (error) {
       console.log(error);
