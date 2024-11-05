@@ -120,9 +120,9 @@ export default function ProfilePage({ setProfilePicture }) {
       const {success, message} = data;
       if (success) {
         handleSuccess(message);
-        setProfilePicture(`https://${process.env.REACT_APP_SOCKET_ENDPOINT}/profilePictures/` + image.raw.name);
+        setProfilePicture(`http://${process.env.REACT_APP_SOCKET_ENDPOINT}/profilePictures/` + image.raw.name);
         setError("");
-        localStorage.setItem('user', JSON.stringify({ ...user, email: email, profilePicture: `https://${process.env.REACT_APP_SOCKET_ENDPOINT}/profilePictures/` + image.raw.name }));
+        localStorage.setItem('user', JSON.stringify({ ...user, email: email, profilePicture: `http://${process.env.REACT_APP_SOCKET_ENDPOINT}/profilePictures/` + image.raw.name }));
       }
     } catch (error) {
       console.log(error);
